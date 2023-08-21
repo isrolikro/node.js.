@@ -1,71 +1,78 @@
-import productsRepo from "../dal/productsRepo.js";
+import fs from "fs/promises"; // Using promises version of fs
+import { v4 } from "uuid";
 
-import joi from "joi";
+const PRODUCTS_FILE_PATH = "C:/Users/isrolik rozen/Documents/development/20.08.projct/data.json";
 
-const newProductSchema = joi.object({
-  title: joi.string().required(),
-  price: joi.number().positive().required(),
-  description: joi.string().required(),
-  category: joi.string().required(),
-  image: joi.string().uri().required(),
-  rating: joi
-    .object({
-      rate: joi.number().positive().max(5).required(),
-      count: joi.number().integer().min(0).required(),
-    })
-    .required(),
-  quantity: joi.number().integer().min(0).required(),
-});
+const readProductsFromFile = async () => {
+  const data = await fs.readFile(PRODUCTS_FILE_PATH, "utf8");
+  return JSON.parse(data);
+};
 
-const updateProductSchema = joi.object({
-  title: joi.string(),
-  price: joi.number().positive(),
-  description: joi.string(),
-  category: joi.string(),
-  image: joi.string().uri(),
-  rating: joi.object({
-    rate: joi.number().positive().max(5),
-    count: joi.number().integer().min(0),
-  }),
-  quantity: joi.number().integer().min(0),
-});
-
-const createProduct = async (product) => {
-  const { error } = newProductSchema.validate(product);
-  if (error) {
-    throw new Error(`Validation error: ${error.details[0].message}`);
-  }
-
-  return productsRepo.createProduct(product);
+const writeProductsToFile = async (products) => {
+  const updatedDataJSON = JSON.stringify(products);
+  await fs.writeFile(PRODUCTS_FILE_PATH, updatedDataJSON, "utf8");
 };
 
 const getAllProducts = async () => {
-  return productsRepo.getAllProducts();
+  const products = await readProductsFromFile();
+  return products;
 };
 
 const getProduct = async (productId) => {
-  return productsRepo.getProduct(productId);
+  const products = await readProductsFromFile();
+  return products.find((product) => product.id == productId);
 };
 
 const deleteProduct = async (productId) => {
-  return productsRepo.deleteProduct(productId);
+  const products = await readProductsFromFile();
+  const productIndex = products.findIndex((product) => product.id == productId);
+
+  if (productIndex === -1) {
+    return null;
+  }
+
+  const deletedProduct = products.splice(productIndex, 1)[0];
+  await writeProductsToFile(products);
+
+  return deletedProduct;
 };
 
 const updateProduct = async (productId, newProduct) => {
-  const { error } = newProductSchema.validate(newProduct);
-  if (error) {
-    throw new Error(`Validation error: ${error.details[0].message}`);
+  const products = await readProductsFromFile();
+  const productIndex = products.findIndex((product) => product.id == productId);
+
+  if (productIndex === -1) {
+    return null;
   }
-  return productsRepo.updateProduct(productId, newProduct);
+
+  products[productIndex] = { ...products[productIndex], ...newProduct };
+  await writeProductsToFile(products);
+
+  return products[productIndex];
 };
 
 const changeQuantity = async (productId, newProduct) => {
-  const { error } = updateProductSchema.validate(newProduct);
-  if (error) {
-    throw new Error(`Validation error: ${error.details[0].message}`);
+  const products = await readProductsFromFile();
+  const productIndex = products.findIndex((product) => product.id == productId);
+
+  if (productIndex === -1) {
+    return null;
   }
-  return productsRepo.changeQuantity(productId, newProduct);
+
+  products[productIndex] = { ...products[productIndex], ...newProduct };
+  await writeProductsToFile(products);
+
+  return products[productIndex];
 };
+
+const createProduct = async (product) => {
+  const products = await readProductsFromFile();
+  product.id = v4();
+  console.log(product);
+  products.push(product);
+  await writeProductsToFile(products);
+  return product;
+}
 
 export default {
   getAllProducts,

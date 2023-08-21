@@ -1,7 +1,8 @@
 import express  from "express";
 
 import productsRoute from "./productsRoute.js"
-import loginRoute from "../users/loginRoute.js"
+import usersController from "../users/usersController.js"
+import authenticateRoute from "../auth/authenticateRoute.js";
 
 const router = express.Router();
 
@@ -11,9 +12,10 @@ router.get("/" , req, res =>{
 })
 
 router.use("/product", productsRoute)
+router.use("/users", usersController)
+router.use("/auth", authenticateRoute)
 
-router.use("/login", loginRoute)
+
   
-
 export default router;
 

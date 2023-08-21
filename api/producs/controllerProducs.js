@@ -1,8 +1,8 @@
-import productsService from "../services/productsService.js";
+import productsService from "./server.js";
 
 const getAllProducts = async (req, res) => {
 try {
-    const products = await productController.getAllProducts();
+    const products = await productsService.getAllProducts();
     res.json(products);
 } catch (error) {
     console.error("Error", error)
