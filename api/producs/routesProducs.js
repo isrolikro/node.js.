@@ -1,7 +1,7 @@
 import express  from "express";
 
 import productsRoute from "./productsRoute.js"
-import loginRoute from "./loginRoute.js"
+import loginRoute from "../users/loginRoute.js"
 
 const router = express.Router();
 
