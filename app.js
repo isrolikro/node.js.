@@ -1,6 +1,6 @@
 import express from "express";
 import morgan from "morgan";
-import routes from "./routes";
+import routes from "./routes.js";
 
 const data = [
     {
@@ -189,9 +189,9 @@ app.use("/api", routes);
 
 
 app.listen(3000, () => console.log("Example app listening on port3000!"));
-git init
-git add .
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/isrolikro/modols.git
-git push -u origin main
+// git init
+// git add .
+// git commit -m "first commit"
+// git branch -M main
+// git remote add origin https://github.com/isrolikro/modols.git
+// git push -u origin main
