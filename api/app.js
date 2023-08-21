@@ -189,9 +189,3 @@ app.use("/api", routes);
 
 
 app.listen(3000, () => console.log("Example app listening on port3000!"));
-// git init
-// git add .
-// git commit -m "first commit"
-// git branch -M main
-// git remote add origin https://github.com/isrolikro/modols.git
-// git push -u origin main
